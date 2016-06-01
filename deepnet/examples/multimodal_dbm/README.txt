@@ -1,10 +1,10 @@
 ############################
-MULTIMODAL DEEP BELIEF NETS
+MULTIMODAL DEEP BOLTZMANN MACHINES
 
 Nitish Srivastava
 University of Toronto
 ############################
-This code trains a Multimodal DBN on the MIR-Flickr dataset.
+This code trains a Multimodal DBM on the MIR-Flickr dataset.
 The implementation uses GPUs to accelerate training.
 
 (1) GET DATA
@@ -16,8 +16,8 @@ The implementation uses GPUs to accelerate training.
 
 (2) TRAIN MULTIMODAL DBN
   - Change to the directory containing this file.
-  - Edit paths in runall_dbn.sh
-  - Train dbn
-  $ ./runall_dbn.sh
+  - Edit paths in runall_dbm.sh
+  - Train dbm
+  $ ./runall_dbm.sh
 
-This implementation has been tested on Ubuntu 12.04 using CUDA 4.2.
+This implementation has not been tested.
