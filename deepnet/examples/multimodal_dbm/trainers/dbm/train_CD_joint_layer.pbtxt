@@ -1,0 +1,14 @@
+optimizer: PCD
+stopcondition {
+  all_processed: false
+  steps: 20000
+}
+train: true
+batchsize: 200
+data_proto: "joint_rbm_LAST/input_data.pbtxt"
+eval_after: 5000
+checkpoint_after: 10000
+checkpoint_directory: "/home/xcs/Data/flickr/dbm_models"
+randomize: false
+show_after: 1000
+data_proto_prefix: "/home/xcs/Data/flickr/dbm_reps"

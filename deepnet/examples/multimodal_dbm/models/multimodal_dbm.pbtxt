@@ -1,0 +1,214 @@
+name: "multimodal_dbm"
+model_type: DBM
+layer {
+  name: "image_input_layer"
+  dimensions: 3857
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "image_rbm1_LAST"
+    pretrained_model_param_name: "bias"
+  }
+  is_input: true
+  loss_function: SQUARED_LOSS
+  hyperparams {
+    base_epsilon: 0.001
+    dropout: false
+    activation: LINEAR
+    normalize: true
+  }
+  data_field {
+    train: "image_unlabelled"
+    validation: "image_labelled"
+  }
+  performance_stats {
+    compute_error: true
+  }
+}
+layer {
+  name: "text_input_layer"
+  dimensions: 1
+  numlabels: 2000
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "text_rbm1_LAST"
+  }
+  is_input: true
+  loss_function: SQUARED_LOSS
+  hyperparams {
+    dropout: false
+    activation: REPLICATED_SOFTMAX
+    normalize: true
+    normalize_to: 5.0
+  }
+  data_field {
+    train: "text_unlabelled"
+    validation: "text_labelled"
+  }
+  performance_stats {
+    compute_error: true
+  }
+}
+layer {
+  name: "image_hidden1"
+  dimensions: 1024
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "image_rbm2_LAST"
+    pretrained_model: "image_rbm1_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+layer {
+  name: "text_hidden1"
+  dimensions: 1024
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "text_rbm1_LAST"
+    pretrained_model: "text_rbm2_LAST"
+  }
+}
+layer {
+  name: "image_hidden2"
+  dimensions: 1024
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "image_rbm2_LAST"
+    pretrained_model: "joint_rbm_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+layer {
+  name: "text_hidden2"
+  dimensions: 1024
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "text_rbm2_LAST"
+    pretrained_model: "joint_rbm_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+layer {
+  name: "joint_hidden"
+  dimensions: 2048
+  param {
+    name: "bias"
+    initialization: PRETRAINED
+    pretrained_model: "joint_rbm_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+edge {
+  node1: "image_hidden2"
+  node2: "joint_hidden"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "joint_rbm_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+edge {
+  node1: "text_hidden2"
+  node2: "joint_hidden"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "joint_rbm_LAST"
+  }
+}
+edge {
+  node1: "image_hidden1"
+  node2: "image_hidden2"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "image_rbm2_LAST"
+  }
+  hyperparams {
+    enable_display: false
+  }
+}
+edge {
+  node1: "text_hidden1"
+  node2: "text_hidden2"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "text_rbm2_LAST"
+  }
+}
+edge {
+  node1: "image_input_layer"
+  node2: "image_hidden1"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "image_rbm1_LAST"
+  }
+  hyperparams {
+    base_epsilon: 0.001
+    enable_display: false
+  }
+}
+edge {
+  node1: "text_input_layer"
+  node2: "text_hidden1"
+  directed: false
+  param {
+    name: "weight"
+    initialization: PRETRAINED
+    pretrained_model: "text_rbm1_LAST"
+  }
+}
+hyperparams {
+  base_epsilon: 0.01
+  epsilon_decay: NONE
+  epsilon_decay_half_life: 5000
+  initial_momentum: 0.0
+  final_momentum: 0.0
+  momentum_change_steps: 10000
+  sparsity: false
+  sparsity_target: 0.1
+  sparsity_cost: 0.001
+  sparsity_damping: 0.9
+  apply_l2_decay: true
+  l2_decay: 0.0001
+  activation: LOGISTIC
+  mf_steps: 5
+  gibbs_steps: 5
+  enable_display: false
+}
+positive_phase_order: "image_hidden1"
+positive_phase_order: "text_hidden1"
+positive_phase_order: "joint_hidden"
+positive_phase_order: "image_hidden2"
+positive_phase_order: "text_hidden2"
+negative_phase_order: "image_input_layer"
+negative_phase_order: "text_input_layer"
+negative_phase_order: "image_hidden2"
+negative_phase_order: "text_hidden2"
+negative_phase_order: "image_hidden1"
+negative_phase_order: "text_hidden1"
+negative_phase_order: "joint_hidden"
+prefix: "/home/xcs/Data/flickr/dbm_models"
